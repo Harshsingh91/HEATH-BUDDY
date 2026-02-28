@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI • active life planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* ------- FITNESS THEME BACKGROUND - rich dynamic gradient ------- */
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            /* energetic gym / fitness gradient: deep blue → electric violet → fresh green */
+            background: linear-gradient(145deg,
+                    #0b2b3f 0%,
+                    #1b4d6e 25%,
+                    #bc4e9c 70%,
+                    #f3a683 100%);
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        /* subtle hexagon pattern overlay (gym/athletic vibe) */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.08"><path d="M50 0 L62.5 25 L50 50 L37.5 25 Z M50 50 L62.5 75 L50 100 L37.5 75 Z" fill="white"/><circle cx="50" cy="25" r="3" fill="white"/><circle cx="50" cy="75" r="3" fill="white"/></svg>');
+            background-size: 80px 80px;
+            pointer-events: none;
+        }
+
+        /* main card – now with a bold, translucent athletic look */
+        .glass-card {
+            max-width: 1150px;
+            width: 100%;
+            background: rgba(15, 25, 35, 0.7);
+            /* deep night base */
+            backdrop-filter: blur(14px) saturate(180%);
+            -webkit-backdrop-filter: blur(14px) saturate(180%);
+            border-radius: 3rem;
+            box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 215, 150, 0.2) inset,
+                0 0 30px rgba(236, 72, 153, 0.3);
+            /* neon glow */
+            padding: 2.2rem 2.2rem 2.8rem;
+            border: 1px solid rgba(255, 209, 149, 0.25);
+            transition: 0.3s;
+            z-index: 2;
+        }
+
+        /* header gets sporty bright accent */
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #f6d5a3, #ffb6c1, #a7e0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 0 8px #ffae4280;
+        }
+
+        h1 span {
+            background: #ff7e5f;
+            /* vibrant coral */
+            color: #0e1e2b;
+            font-size: 1.1rem;
+            padding: 0.3rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 15px #ffb56b;
+            border: 1px solid #ffe0a3;
+        }
+
+        .sub {
+            color: #e7d6c0;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            border-left: 5px solid #fcb045;
+            padding-left: 1.3rem;
+            font-size: 1.2rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+        }
+
+        /* input panel with energetic edge */
+        .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 2.5rem;
+            padding: 2rem 2.2rem;
+            margin-bottom: 2.5rem;
+            align-items: flex-end;
+            border: 1px solid rgba(255, 184, 108, 0.4);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 15px 25px -10px #0000004d, inset 0 1px 2px rgba(255, 165, 0, 0.3);
+        }
+
+        .input-group {
+            flex: 1 1 180px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fdc9a5;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: #162b39;
+            border: 2px solid #e07c4c60;
+            border-radius: 60px;
+            padding: 1rem 1.5rem;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: #fcf3e1;
+            transition: 0.2s;
+            outline: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .input-group input:focus {
+            border-color: #fbb45c;
+            box-shadow: 0 0 0 4px #f9731640, 0 4px 15px #f97316;
+            background: #1d3647;
+        }
+
+        .input-group input::placeholder {
+            color: #b1c9db;
+            font-weight: 400;
+        }
+
+        .btn-calc {
+            background: linear-gradient(145deg, #f76c1c, #f93d3d);
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 1rem 2.8rem;
+            border-radius: 60px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 10px 25px -3px #f63e3e, 0 0 20px #ffa41b;
+            border: 1px solid #ffc285;
+            letter-spacing: 0.5px;
+            margin-left: auto;
+            text-transform: uppercase;
+        }
+
+        .btn-calc:hover {
+            background: linear-gradient(145deg, #ff8a3c, #ff5757);
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px 0 #e63946, 0 0 30px #ffb042;
+        }
+
+        /* result badge – vibrant fitness card */
+        .result-badge {
+            background: linear-gradient(115deg, #022b3a, #1d4e6b, #a2395b);
+            border-radius: 2.5rem;
+            padding: 1.7rem 2.3rem;
+            margin-bottom: 2.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #f7c46e;
+            box-shadow: 0 20px 30px -10px black, 0 0 0 2px #fdaa9b80 inset;
+        }
+
+        .bmi-value {
+            font-size: 2.7rem;
+            font-weight: 800;
+            color: #fee3c0;
+            text-shadow: 0 3px 10px #f07167;
+        }
+
+        .bmi-value small {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #cfb1a0;
+            margin-left: 10px;
+        }
+
+        .category-chip {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: #1e293bb0;
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 2.4rem;
+            border-radius: 60px;
+            box-shadow: 0 8px 18px #00000050, 0 0 0 2px #fbb471;
+            color: #fff0da;
+        }
+
+        /* double card container */
+        .plans-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        /* individual plan boxes – gym-floor style */
+        .plan-box {
+            background: rgba(12, 26, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 2.2rem;
+            padding: 1.8rem 1.8rem 2.3rem;
+            border: 1px solid rgba(255, 165, 80, 0.5);
+            box-shadow: 0 25px 35px -15px #000000b3, 0 0 0 1px #ffa74d inset;
+            transition: all 0.2s;
+        }
+
+        .plan-box:hover {
+            border-color: #ffb66c;
+            box-shadow: 0 30px 45px -12px #fc4a1a, 0 0 0 2px #fbb85c inset;
+        }
+
+        .plan-box h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 700;
+            font-size: 1.9rem;
+            background: linear-gradient(135deg, #fff5e6, #fdd4b3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.8rem;
+            border-bottom: 2px solid #f49b6d;
+            padding-bottom: 0.6rem;
+            text-shadow: 0 0 6px #fdaa6b;
+        }
+
+        .plan-box h2 i {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 5px orange);
+        }
+
+        .diet-list,
+        .exercise-list {
+            list-style: none;
+        }
+
+        .diet-list li,
+        .exercise-list li {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            color: #eedbcb;
+            font-weight: 400;
+            line-height: 1.5;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 0.5rem 1rem 0.5rem 0.7rem;
+            border-radius: 50px;
+            border: 1px solid #f9ae6c30;
+            backdrop-filter: blur(4px);
+        }
+
+        .diet-list li span.bullet,
+        .exercise-list li span.bullet {
+            background: radial-gradient(circle at 30% 20%, #fea851, #f1543a);
+            color: #0e141b;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-top: 0;
+            box-shadow: 0 0 12px #f9b83a;
+            border: 1px solid #ffd68f;
+        }
+
+        .exercise-list li span.bullet {
+            background: radial-gradient(circle at 30% 20%, #57da9c, #2fa86a);
+            box-shadow: 0 0 12px #72ef9e;
+        }
+
+        .placeholder-note {
+            color: #ffe1c1;
+            font-style: italic;
+            padding: 1.5rem;
+            background: #1c3a4e60;
+            border-radius: 2rem;
+            text-align: center;
+            border: 1px dashed #f6b483;
+        }
+
+        footer {
+            margin-top: 2.2rem;
+            text-align: center;
+            color: #fbcbb6;
+            font-size: 0.95rem;
+            text-shadow: 0 0 8px #f0974b;
+            letter-spacing: 0.3px;
+        }
+
+        hr {
+            border: 1px solid #fcb56e50;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 700px) {
+            .glass-card {
+                padding: 1.5rem;
+            }
+
+            .plans-container {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-calc {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glass-card">
+        <h1>⚡ ACTIVE FUEL <span>BMI + BLUEPRINT</span></h1>
+        <div class="sub">🔥 personalised fat loss · muscle · performance plans</div>
+
+        <!-- input row -->
+        <div class="input-row">
+            <div class="input-group">
+                <label>📏 height (cm)</label>
+                <input type="number" id="height" placeholder="e.g., 178" min="100" max="250" step="0.1">
+            </div>
+            <div class="input-group">
+                <label>⚖️ weight (kg)</label>
+                <input type="number" id="weight" placeholder="e.g., 74" min="20" max="250" step="0.1">
+            </div>
+            <button class="btn-calc" id="calculateBtn">→ calculate my BMI</button>
+        </div>
+
+        <!-- result panel -->
+        <div class="result-badge" id="resultBox">
+            <div class="bmi-value" id="bmiDisplay">— <small>kg/m²</small></div>
+            <div class="category-chip" id="categoryDisplay">ready</div>
+        </div>
+
+        <!-- diet & exercise cards -->
+        <div class="plans-container">
+            <div class="plan-box" id="dietBox">
+                <h2>🍽️ NUTRITION MAP</h2>
+                <ul class="diet-list" id="dietList">
+                    <li><span class="bullet">🥑</span> enter your stats & hit calculate</li>
+                    <li><span class="bullet">📊</span> we'll design your meal guide</li>
+                </ul>
+            </div>
+            <div class="plan-box" id="exerciseBox">
+                <h2>🏋️ MOVEMENT RX</h2>
+                <ul class="exercise-list" id="exerciseList">
+                    <li><span class="bullet">🔥</span> your custom exercise protocol</li>
+                    <li><span class="bullet">💪</span> based on BMI + fitness goal</li>
+                </ul>
+            </div>
+        </div>
+        <footer>🏆 every body is different — let’s build your winning routine</footer>
+    </div>
+
+    <script>
+        (function () {
+            const heightInput = document.getElementById('height');
+            const weightInput = document.getElementById('weight');
+            const calcBtn = document.getElementById('calculateBtn');
+            const bmiDisplay = document.getElementById('bmiDisplay');
+            const categoryDisplay = document.getElementById('categoryDisplay');
+            const dietList = document.getElementById('dietList');
+            const exerciseList = document.getElementById('exerciseList');
+
+            // helper: build bullet list from string array
+            function bulletList(items) {
+                return items.map(item => {
+                    const bullet = item.charAt(0);
+                    const text = item.slice(1).trim();
+                    return `<li><span class="bullet">${bullet}</span>${text}</li>`;
+                }).join('');
+            }
+
+            // render plans based on category
+            function renderPlans(category) {
+                // ---------- DIET CHARTS ----------
+                let dietItems = [];
+                if (category === 'Underweight') {
+                    dietItems = [
+                        '🥜 Healthy fats: avocado, nuts, extra virgin olive oil',
+                        '🍚 Carb loading: quinoa, oats, potatoes, whole grain pasta',
+                        '🍗 Protein+ : chicken thigh, fatty fish, whole eggs, whey',
+                        '🥛 Full‑fat dairy / plant based + protein shakes',
+                        '🍌 5–6 meals: banana + peanut butter, trail mix',
+                        '🥭 dried fruits, seeds, and calorie‑dense snacks'
+                    ];
+                } else if (category === 'Normal weight') {
+                    dietItems = [
+                        '🥗 Balanced plate: 1/2 veg, 1/4 lean protein, 1/4 complex carb',
+                        '🐟 Omega‑3: salmon, walnuts, flax (2–3x/week)',
+                        '🍠 High fiber: sweet potato, legumes, berries',
+                        '💧 Hydrate 2–2.5L: water, green tea – limit sugar',
+                        '🥚 Lean proteins: eggs, turkey, tofu – maintain muscle',
+                        '🍅 colourful antioxidants daily'
+                    ];
+                } else if (category === 'Overweight') {
+                    dietItems = [
+                        '🥦 Volume greens: broccoli, spinach, cucumbers – high satiety',
+                        '🍗 Lean protein: chicken breast, fish, cottage cheese (25‑30g/meal)',
+                        '🍚 Portion control: measure oils, limit grains to 1 cup/meal',
+                        '🥤 no liquid calories – water, black coffee',
+                        '🌾 whole grains over white: oats, brown rice, quinoa',
+                        '⏰ early dinner, no food 3h before bed'
+                    ];
+                } else if (category === 'Obese') {
+                    dietItems = [
+                        '🥗 structured low‑cal: 1200–1500 (F) / 1500–1800 (M) – consult expert',
+                        '🥒 high water veg: zucchini, cauliflower, bell peppers',
+                        '🍗 ultra lean: skinless chicken, white fish, egg whites',
+                        '🍚 limit carbs to 1/2 cup per meal, focus on protein',
+                        '🚫 zero added sugar, processed food, trans fat',
+                        '💧 2.5L+ water + food diary recommended'
+                    ];
+                } else {
+                    dietItems = ['📊 please calculate your BMI first'];
+                }
+
+                // ---------- EXERCISE CHARTS ----------
+                let exerciseItems = [];
+                if (category === 'Underweight') {
+                    exerciseItems = [
+                        '🏋️ strength 3–4x/week: squats, presses, rows (progressive overload)',
+                        '🧘 light cardio: 2x/week 20 min walk – avoid excess burn',
+                        '🍑 glutes & core: lunges, planks, hip thrusts',
+                        '🧘‍♂️ rest 8h sleep, 1 full rest day',
+                        '🤸 yoga / mobility 1x/week',
+                        '🥩 compound lifts to build mass'
+                    ];
+                } else if (category === 'Normal weight') {
+                    exerciseItems = [
+                        '🏃 cardio 3x/week: 30 min run / swim / brisk walk',
+                        '🏋️ full body strength 2x/week (push‑pull‑legs)',
+                        '🧘 mobility & core daily (10 min stretch)',
+                        '⚡ HIIT 1x/week (optional) for endurance',
+                        '🎯 8k–10k steps daily + active hobbies',
+                        '🧗 sports / hiking – keep it fun'
+                    ];
+                } else if (category === 'Overweight') {
+                    exerciseItems = [
+                        '🔥 cardio 4–5x/week: 40 min elliptical, cycling, incline walk',
+                        '🏋️ strength 2–3x/week: moderate weight, 12‑15 reps',
+                        '🧊 low impact HIIT 1x/week: battle ropes, sled',
+                        '🧘 daily movement: 8k steps, hourly stretch',
+                        '🍑 large muscle focus: squats, rows, push‑ups',
+                        '📉 track non‑scale victories (waist, endurance)'
+                    ];
+                } else if (category === 'Obese') {
+                    exerciseItems = [
+                        '🚶 low impact: daily 20–40 min walking, water aerobics',
+                        '🪑 seated resistance: bands, chair squats, wall push‑ups',
+                        '🧘 gentle stretching / chair yoga / mobility',
+                        '💧 stay hydrated, avoid overheating',
+                        '👟 proper footwear, joint protection',
+                        '🩺 always consult doctor – gradual progression'
+                    ];
+                } else {
+                    exerciseItems = ['📊 please calculate your BMI first'];
+                }
+
+                dietList.innerHTML = bulletList(dietItems);
+                exerciseList.innerHTML = bulletList(exerciseItems);
+            }
+
+            // main calculation function
+            function calculateAndUpdate() {
+                let hStr = heightInput.value.trim().replace(',', '.');
+                let wStr = weightInput.value.trim().replace(',', '.');
+
+                let h = parseFloat(hStr);
+                let w = parseFloat(wStr);
+
+                if (isNaN(h) || isNaN(w) || h <= 0 || w <= 0 || h < 60 || h > 280 || w < 15 || w > 300) {
+                    bmiDisplay.innerHTML = '⚠️ <small>invalid input</small>';
+                    categoryDisplay.innerText = 'check values';
+                    dietList.innerHTML = '<li><span class="bullet">❗</span> enter valid height (cm) & weight (kg)</li>';
+                    exerciseList.innerHTML = '<li><span class="bullet">📐</span> both must be positive numbers</li>';
+                    return;
+                }
+
+                let heightM = h / 100;
+                let bmi = w / (heightM * heightM);
+                bmi = Math.round(bmi * 10) / 10;
+
+                let category = '';
+                if (bmi < 18.5) category = 'Underweight';
+                else if (bmi >= 18.5 && bmi < 25) category = 'Normal weight';
+                else if (bmi >= 25 && bmi < 30) category = 'Overweight';
+                else if (bmi >= 30) category = 'Obese';
+                else category = 'unknown';
+
+                bmiDisplay.innerHTML = `${bmi} <small>kg/m²</small>`;
+                categoryDisplay.innerText = category;
+
+                renderPlans(category);
+            }
+
+            calcBtn.addEventListener('click', calculateAndUpdate);
+
+            [heightInput, weightInput].forEach(input => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        calcBtn.click();
+                    }
+                });
+            });
+
+            // set friendly placeholder on load
+            window.addEventListener('load', function () {
+                dietList.innerHTML = '<li><span class="bullet">🥗</span> enter height & weight → get meal plan</li>';
+                exerciseList.innerHTML = '<li><span class="bullet">🏋️</span> we will build your perfect workout</li>';
+                bmiDisplay.innerHTML = '— <small>kg/m²</small>';
+                categoryDisplay.innerText = 'set goals';
+            });
+        })();
+    </script>
+</body>
+
+</html>
