@@ -1,1 +1,1 @@
-Ai Trainer is a single-file, browser-based AI fitness web app. It combines a BMI calculator, personalised nutrition and exercise planner, weekly schedule builder, and a live AI personal trainer chatbot — all in one HTML file with zero backend, zero dependencies, and zero installation required.
+Ai Trainer is a single-file, browser-based AI fitness web app. It combines a BMI calculator, personalised nutrition and exercise planner, weekly schedule builder, and a live AI personal trainer chatbot 
